@@ -1625,12 +1625,6 @@ public final class Settings {
         public static final String MODE_RINGER = "mode_ringer";
 
         /**
-         * User interface mode. This is used to change the UI mode forcing it to
-         * Change into tablet mode. Default is disabled. 
-         */
-        public static final String MODE_TABLET_UI = "mode_tabletui";
-
-        /**
          * Determines which streams are affected by ringer mode changes. The
          * stream type's bit should be set to 1 if it should be muted when going
          * into an inaudible ringer mode.
@@ -1792,10 +1786,6 @@ public final class Settings {
          * FileNotFoundException.
          */
         public static final Uri DEFAULT_RINGTONE_URI = getUriFor(RINGTONE);
-
-        public static final Uri DEFAULT_VIBRATION_URI = Uri.parse("content://com.aokp.romcontrol.Vibrations/vibrations/0");
-        
-        public static final String PHONE_VIBRATION = "phone_vibration"; 
 
         /**
          * Persistent store for the system-wide default notification sound.
@@ -2118,12 +2108,6 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_DISABLED = "lockscreen.disabled";
-
-        /**
-         * Whether to enable lockscreen rotation
-         * @hide
-         */
-        public static final String LOCKSCREEN_AUTO_ROTATE = "com.android.internal.R.config_enableLockScreenRotation";
 
         /**
          * URI for the low battery sound file.
@@ -2571,18 +2555,9 @@ public final class Settings {
         public static final String POWER_DIALOG_SHOW_AIRPLANE_TOGGLE = "power_dialog_show_airplane_toggle";
 
          /**
-          * Used to determine if the NavBar should be enabled on devices that do not
-          * otherwise have a NavBar
          * @hide
          */
         public static final String NAVIGATION_BAR_SHOW = "navigation_bar_show";
-
-        /**
-         * Used to determine if NavBar is currently shown or hidden as a user choice
-         *
-         * @hide
-         */
-        public static final String NAVIGATION_BAR_SHOW_NOW = "navigation_bar_show_now";
 
          /**
          * Navigation bar height in portrait
@@ -2601,71 +2576,6 @@ public final class Settings {
          * @hide
          */
         public static final String NAVIGATION_BAR_WIDTH = "navigation_bar_width";
-
-         /**
-         * @hide
-         */
-        public static final String SYSTEMUI_NAVRING_1 = "systemui_navring_1";
-
-        /**
-         * @hide
-         */
-        public static final String SYSTEMUI_NAVRING_2 = "systemui_navring_2";
-
-        /**
-         * @hide
-         */
-        public static final String SYSTEMUI_NAVRING_3 = "systemui_navring_3";
-
-        /**
-         * @hide
-         */
-        public static final String SYSTEMUI_NAVRING_4 = "systemui_navring_4";
-
-        /**
-         * @hide
-         */
-        public static final String SYSTEMUI_NAVRING_5 = "systemui_navring_5";
-
-        /**
-         * @hide
-         */
-        public static final String SYSTEMUI_NAVRING_AMOUNT = "systemui_navring_amount";
-
-        /**
-         * @hide
-         */
-        public static final String SYSTEMUI_NAVRING_ASSIST = "assist";
-
-        /**
-         * hide
-         */
-        public static final String SYSTEMUI_SOFTKEY_REBOOT = "reboot";
-
-        /**
-         * hide
-         */
-        public static final String SYSTEMUI_SOFTKEY_SCREENSHOT = "screenshot";
-
-        /**
-         * hide
-         */
-        public static final String SYSTEMUI_SOFTKEY_SCREENOFF = "screenoff";
-
-        /**
-         * hide
-         */
-        public static final String SYSTEMUI_SOFTKEY_KILL_PROCESS = "killcurrent";
-
-        /**
-         * @hide
-         */
-        public static final String SYSTEMUI_NAVRING_OVERRIDE_HOME = "systemui_navring_override_home";
-
-        /**
-         * @hide
-         */
-        public static final int SYSTEMUI_NAVRING_OVERRIDE_HOME_DEF = 0;
 
         /**
          * whether volume keys wake the screen. boolean value
@@ -2870,12 +2780,6 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_CALENDAR_INTERVAL = "lockscreen_calendar_interval";
-
-        /**
-         * Whether to show the stock music layout on the lockscreen
-         * @hide
-         */
-        public static final String LOCKSCREEN_STOCK_MUSIC_LAYOUT = "lockscreen_stock_music_layout";
 
         /**
          * How to show weather on the statusbar
@@ -3180,20 +3084,6 @@ public final class Settings {
          * @hide
          */
         public static final String STATUSBAR_WIFI_SIGNAL_TEXT_COLOR = "statusbar_wifi_signal_text_color";
-
-        /**
-         * use Alt Statusbar Signal Layout
-         * boolean
-         *
-         * @hide
-         */
-        public static final String STATUSBAR_SIGNAL_CLUSTER_ALT = "statusbar_signal_cluster_alt";
-
-        /**
-         * Variable to determine if NFC sounds are played.
-         * @hide
-         */
-        public static final String TOGGLE_NFC_SOUNDS = "toggle_nfc_sounds";
     }
 
     /**
@@ -5002,36 +4892,6 @@ public final class Settings {
          */
         public static final int INCALL_POWER_BUTTON_BEHAVIOR_DEFAULT =
                 INCALL_POWER_BUTTON_BEHAVIOR_SCREEN_OFF;
-
-        /**
-         * What happens when the user presses the Home button when the
-         * phone is ringing.<br/>
-         * <b>Values:</b><br/>
-         * 1 - Nothing happens. (Default behavior)<br/>
-         * 2 - The Home button answer the current call.<br/>
-         *
-         * @hide
-         */
-        public static final String RING_HOME_BUTTON_BEHAVIOR = "ring_home_button_behavior";
-
-        /**
-         * RING_HOME_BUTTON_BEHAVIOR value for "do nothing".
-         * @hide
-         */
-        public static final int RING_HOME_BUTTON_BEHAVIOR_DO_NOTHING = 0x1;
-
-        /**
-         * RING_HOME_BUTTON_BEHAVIOR value for "answer".
-         * @hide
-         */
-        public static final int RING_HOME_BUTTON_BEHAVIOR_ANSWER = 0x2;
-
-        /**
-         * RING_HOME_BUTTON_BEHAVIOR default value.
-         * @hide
-         */
-        public static final int RING_HOME_BUTTON_BEHAVIOR_DEFAULT =
-                RING_HOME_BUTTON_BEHAVIOR_DO_NOTHING;
 
         /**
          * The current night mode that has been selected by the user.  Owned
