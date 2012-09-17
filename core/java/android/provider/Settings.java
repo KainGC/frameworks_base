@@ -3186,6 +3186,14 @@ public final class Settings {
          * @hide
          */
         public static final String TOGGLE_NFC_SOUNDS = "toggle_nfc_sounds";
+
+        /**
+         * use Alt Statusbar Signal Layout
+         * boolean
+         *
+         * @hide
+         */
+        public static final String STATUSBAR_SIGNAL_CLUSTER_ALT = "statusbar_signal_cluster_alt";
     }
 
     /**
