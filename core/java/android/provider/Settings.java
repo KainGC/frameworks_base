@@ -3180,6 +3180,12 @@ public final class Settings {
          * @hide
          */
         public static final String STATUSBAR_WIFI_SIGNAL_TEXT_COLOR = "statusbar_wifi_signal_text_color";
+    
+        /**
+         * Variable to determine if NFC sounds are played.
+         * @hide
+         */
+        public static final String TOGGLE_NFC_SOUNDS = "toggle_nfc_sounds";
 
         /**
          * use Alt Statusbar Signal Layout
