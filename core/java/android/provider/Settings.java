@@ -3222,12 +3222,6 @@ public final class Settings {
          * @hide
          */
         public static final String STATUSBAR_SIGNAL_CLUSTER_ALT = "statusbar_signal_cluster_alt";
-
-        /**
-         * Variable to determine if NFC sounds are played.
-         * @hide
-         */
-        public static final String TOGGLE_NFC_SOUNDS = "toggle_nfc_sounds";
     }
 
     /**
