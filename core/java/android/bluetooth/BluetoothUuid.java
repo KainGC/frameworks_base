@@ -142,14 +142,6 @@ public final class BluetoothUuid {
 	return uuid.equals(MessageNotificationServer);
     }
 
-    public static boolean isMessageAccessServer(ParcelUuid uuid) {
-        return uuid.equals(MessageAccessServer);
-    }
-
-    public static boolean isMessageNotificationServer(ParcelUuid uuid) {
-        return uuid.equals(MessageNotificationServer);
-    }
-
     /**
      * Returns true if there any common ParcelUuids in uuidA and uuidB.
      *
