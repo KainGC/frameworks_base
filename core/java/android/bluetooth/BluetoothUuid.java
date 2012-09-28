@@ -71,7 +71,7 @@ public final class BluetoothUuid {
 
     public static final ParcelUuid[] RESERVED_UUIDS = {
         AudioSink, AudioSource, AdvAudioDist, HSP, Handsfree, AvrcpController, AvrcpTarget,
-        ObexObjectPush, MessageAccessServer, MessageNotificationServer,  PANU, NAP};
+        ObexObjectPush, MessageAccessServer, MessageNotificationServer, PANU, NAP};
 
     public static boolean isAudioSource(ParcelUuid uuid) {
         return uuid.equals(AudioSource);
@@ -140,6 +140,14 @@ public final class BluetoothUuid {
 			
     public static boolean isMessageNotificationServer(ParcelUuid uuid) {
 	return uuid.equals(MessageNotificationServer);
+    }
+
+    public static boolean isMessageAccessServer(ParcelUuid uuid) {
+        return uuid.equals(MessageAccessServer);
+    }
+
+    public static boolean isMessageNotificationServer(ParcelUuid uuid) {
+        return uuid.equals(MessageNotificationServer);
     }
 
     /**
