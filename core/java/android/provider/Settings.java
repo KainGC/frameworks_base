@@ -1631,6 +1631,13 @@ public final class Settings {
         public static final String MODE_TABLET_UI = "mode_tabletui";
 
         /**
+         * User interface mode. This is used to change from singlepane mode forcing it to
+         * Change into multipane mode. Default is disabled. 
+         */
+        public static final String FORCE_DUAL_PANEL = "force_dualpanel";
+
+
+        /**
          * Determines which streams are affected by ringer mode changes. The
          * stream type's bit should be set to 1 if it should be muted when going
          * into an inaudible ringer mode.
@@ -2069,6 +2076,11 @@ public final class Settings {
          */
         public static final String NOTIFICATION_LIGHT_PULSE = "notification_light_pulse";
 
+        /** Sprint MWI Quirk: Show message wait indicator notifications
+         * @hide
+         */
+        public static final String ENABLE_MWI_NOTIFICATION = "enable_mwi_notification";
+
         /**
          * Show pointer location on screen?
          * 0 = no
@@ -2078,12 +2090,27 @@ public final class Settings {
         public static final String POINTER_LOCATION = "pointer_location";
 
         /**
+         * Show icon when stylus is used?
+         * 0 = no
+         * 1 = yes
+         * @hide
+         */
+        public static final String STYLUS_ICON_ENABLED = "stylus_icon_enabled";
+
+        /**
          * Show touch positions on screen?
          * 0 = no
          * 1 = yes
          * @hide
          */
         public static final String SHOW_TOUCHES = "show_touches";
+
+        /**
+         * The keylayout that will be used by EventHub instead of the default
+         * one.
+         * @hide
+         */
+        public static final String KEYLAYOUT_OVERRIDES = "keylayout";
 
         /**
          * Log raw orientation data from {@link WindowOrientationListener} for use with the
@@ -2652,6 +2679,26 @@ public final class Settings {
          */
         public static final String SYSTEMUI_SOFTKEY_SCREENOFF = "screenoff";
 
+        /**
+         * hide
+         */
+		public static final String SYSTEMUI_SOFTKEY_IME_SWITCHER = "ime_switcher";
+
+        /**
+         * hide
+         */
+		public static final String SYSTEMUI_SOFTKEY_RING_VIB = "ring_vib";
+
+        /**
+         * hide
+         */
+		public static final String SYSTEMUI_SOFTKEY_RING_SILENT = "ring_silent";
+
+        /**
+         * hide
+         */
+		public static final String SYSTEMUI_SOFTKEY_RING_VIB_SILENT = "ring_vib_silent";
+		
         /**
          * hide
          */
