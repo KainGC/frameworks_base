@@ -119,7 +119,13 @@ public final class ClientOperation implements Operation, BaseStream {
             mRequestHeader.mAuthResp = new byte[(header).mAuthResp.length];
             System.arraycopy((header).mAuthResp, 0, mRequestHeader.mAuthResp, 0,
                     (header).mAuthResp.length);
-
+	
+	}
+	if ((header).mConnectionID != null) {
+	    mRequestHeader.mConnectionID = new byte[4];
+	    System.arraycopy((header).mConnectionID, 0, mRequestHeader.mConnectionID, 0,
+		    4);
+	
         }
         if ((header).mConnectionID != null) {
             mRequestHeader.mConnectionID = new byte[4];

@@ -57,9 +57,9 @@ public final class BluetoothUuid {
     public static final ParcelUuid Hid =
             ParcelUuid.fromString("00001124-0000-1000-8000-00805f9b34fb");
     public static final ParcelUuid MessageAccessServer =
-            ParcelUuid.fromString("00001132-0000-1000-8000-00805f9b34fb");
+	    ParcelUuid.fromString("00001132-0000-1000-8000-00805f9b34fb");
     public static final ParcelUuid MessageNotificationServer =
-            ParcelUuid.fromString("00001133-0000-1000-8000-00805f9b34fb");
+	    ParcelUuid.fromString("00001133-0000-1000-8000-00805f9b34fb");
     public static final ParcelUuid PANU =
             ParcelUuid.fromString("00001115-0000-1000-8000-00805F9B34FB");
     public static final ParcelUuid NAP =
@@ -134,13 +134,12 @@ public final class BluetoothUuid {
         }
         return false;
     }
-
     public static boolean isMessageAccessServer(ParcelUuid uuid) {
-        return uuid.equals(MessageAccessServer);
+	return uuid.equals(MessageAccessServer);
     }
-
+			
     public static boolean isMessageNotificationServer(ParcelUuid uuid) {
-        return uuid.equals(MessageNotificationServer);
+	return uuid.equals(MessageNotificationServer);
     }
 
     /**

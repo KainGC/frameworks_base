@@ -367,30 +367,30 @@ public final class ServerOperation implements Operation, BaseStream {
                  */
                 if ((finalBitSet) || (mPrivateOutput.isClosed())) {
                     if (mEndofBody) {
-                        out.write((byte)0x49);
-                        bodyLength += 3;
-                        out.write((byte)(bodyLength >> 8));
-                        out.write((byte)bodyLength);
-                        out.write(body);
-                    }
+			out.write((byte)0x49);
+			bodyLength += 3;
+			out.write((byte)(bodyLength >> 8));
+			out.write((byte)bodyLength);
+			out.write(body);
+		    }
                 } else {
                     out.write(0x48);
-                    bodyLength += 3;
-                    out.write((byte)(bodyLength >> 8));
-                    out.write((byte)bodyLength);
-                    out.write(body);
+		    bodyLength += 3;
+		    out.write((byte)(bodyLength >> 8));
+		    out.write((byte)bodyLength);
+		    out.write(body);
                 }
 
             }
         }
 
         if ((finalBitSet) && (type == ResponseCodes.OBEX_HTTP_OK) && (orginalBodyLength <= 0)) {
-            if (mEndofBody) {
-               out.write(0x49);
-               orginalBodyLength = 3;
-               out.write((byte)(orginalBodyLength >> 8));
-               out.write((byte)orginalBodyLength);
-           }
+	    if(mEndofBody) {
+                out.write(0x49);
+                orginalBodyLength = 3;
+                out.write((byte)(orginalBodyLength >> 8));
+                out.write((byte)orginalBodyLength);
+	    }
         }
 
         mResponseSize = 3;
@@ -722,7 +722,6 @@ public final class ServerOperation implements Operation, BaseStream {
     }
 
     public void noEndofBody() {
-        mEndofBody = false;
+	mEndofBody = false;
     }
-
 }
