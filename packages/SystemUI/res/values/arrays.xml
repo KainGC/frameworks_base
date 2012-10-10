@@ -4,9 +4,9 @@
         <item>@string/wifi</item>
         <item>@string/bt</item>
         <item>@string/gps</item>
-        <item>@string/rotate</item>
-        <item>@string/swagger</item>
-        <item>@string/sync</item>
+        <item>@string/data</item>
+        <item>@string/lte</item>
         <item>@string/silent</item>
+        <item>@string/vibrate</item>
  </string-array>
 </resources>
