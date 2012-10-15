@@ -6,7 +6,10 @@
         <item>@string/gps</item>
         <item>@string/data</item>
         <item>@string/lte</item>
-        <item>@string/silent</item>
+        <item>@string/rotate</item>
+        <item>@string/swagger</item>
         <item>@string/vibrate</item>
+        <item>@string/sync</item>
+        <item>@string/silent</item>
  </string-array>
 </resources>
