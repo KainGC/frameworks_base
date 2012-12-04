@@ -3125,7 +3125,11 @@ public final class Settings {
          */
         public static final String NOTIFICATION_CONVERT_SOUND_TO_VIBRATION = "convert_sound_to_vibration";
 
-
+	/**
+	 * Variable to determine if NFC sounds are played.
+	 * @hide
+	 */
+	public static final String TOGGLE_NFC_SOUNDS = "toggle_nfc_sounds";
     }
 
     /**
