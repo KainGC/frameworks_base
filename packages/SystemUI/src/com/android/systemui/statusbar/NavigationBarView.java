@@ -31,6 +31,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
@@ -52,9 +53,10 @@ import android.widget.LinearLayout;
 
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.systemui.R;
-import com.android.systemui.aokp.AokpTarget;
-import com.android.systemui.statusbar.policy.ExtensibleKeyButtonView;
+import com.android.systemui.aokp.AwesomeAction;
 import com.android.systemui.statusbar.policy.KeyButtonView;
+import com.android.systemui.statusbar.policy.key.ExtensibleKeyButtonView;
+import com.android.systemui.statusbar.policy.key.RecentsKeyButtonView;
 
 public class NavigationBarView extends LinearLayout {
     final static boolean DEBUG = false;
@@ -79,13 +81,10 @@ public class NavigationBarView extends LinearLayout {
     boolean mHidden, mLowProfile, mShowMenu;
     int mDisabledFlags = 0;
     int mNavigationIconHints = 0;
-
     private Drawable mBackIcon, mBackLandIcon, mBackAltIcon, mBackAltLandIcon;
     private boolean mMenuArrowKeys;
     
     public DelegateViewHelper mDelegateHelper;
-
-    private AokpTarget mAokpTarget;
 
     // workaround for LayoutTransitions leaving the nav buttons in a weird state (bug 5549288)
     final static boolean WORKAROUND_INVALID_LAYOUT = true;
@@ -102,6 +101,8 @@ public class NavigationBarView extends LinearLayout {
      */
     int mCurrentUIMode = 0;
 
+    int mNavigationBarColor = -1;
+
     private float mNavigationBarAlpha;
     public static final float KEYGUARD_ALPHA = 0.44f;
 
@@ -111,21 +112,21 @@ public class NavigationBarView extends LinearLayout {
 
     public final static int StockButtonsQty = 3;
     public final static String[] StockClickActions = {
-        AokpTarget.ACTION_BACK,
-        AokpTarget.ACTION_HOME,
-        AokpTarget.ACTION_RECENTS,
-        AokpTarget.ACTION_NULL,
-        AokpTarget.ACTION_NULL,
-        AokpTarget.ACTION_NULL,
-        AokpTarget.ACTION_NULL };
+        AwesomeAction.ACTION_BACK,
+        AwesomeAction.ACTION_HOME,
+        AwesomeAction.ACTION_RECENTS,
+        AwesomeAction.ACTION_NULL,
+        AwesomeAction.ACTION_NULL,
+        AwesomeAction.ACTION_NULL,
+        AwesomeAction.ACTION_NULL };
     public final static String[] StockLongpress = {
-        AokpTarget.ACTION_NULL,
-        AokpTarget.ACTION_NULL,
-        AokpTarget.ACTION_NULL,
-        AokpTarget.ACTION_NULL,
-        AokpTarget.ACTION_NULL,
-        AokpTarget.ACTION_NULL,
-        AokpTarget.ACTION_NULL };
+        AwesomeAction.ACTION_NULL,
+        AwesomeAction.ACTION_NULL,
+        AwesomeAction.ACTION_NULL,
+        AwesomeAction.ACTION_NULL,
+        AwesomeAction.ACTION_NULL,
+        AwesomeAction.ACTION_NULL,
+        AwesomeAction.ACTION_NULL };
 
     FrameLayout rot0;
     FrameLayout rot90;
@@ -253,7 +254,6 @@ public class NavigationBarView extends LinearLayout {
         mBackLandIcon = res.getDrawable(R.drawable.ic_sysbar_back_land);
         mBackAltIcon = ((KeyButtonView)generateKey(false, KEY_BACK_ALT)).getDrawable(); //res.getDrawable(R.drawable.ic_sysbar_back_ime);
         mBackAltLandIcon = ((KeyButtonView)generateKey(true, KEY_BACK_ALT)).getDrawable(); // res.getDrawable(R.drawable.ic_sysbar_back_ime);
-        mAokpTarget = new AokpTarget(context);
     }
 
     private void makeBar() {
@@ -282,7 +282,7 @@ public class NavigationBarView extends LinearLayout {
                         mLongpressActions[j],
                         mPortraitIcons[j]);
                 v.setTag((landscape ? "key_land_" : "key_") + j);
-                v.setAokpTarget(mAokpTarget);
+//                v.setAokpTarget(mAokpTarget);
                 iconUri = mPortraitIcons[j];
                 if (iconUri != null && iconUri.length() > 0) {
                     // custom icon from the URI here
@@ -292,7 +292,7 @@ public class NavigationBarView extends LinearLayout {
                     }
                     v.setTint(false);
                 } else {
-                    v.setImageDrawable(mAokpTarget.getIconImage(mClickActions[j]));
+                    v.setImageDrawable(AwesomeAction.getInstance(mContext).getIconImage(mClickActions[j]));
                     v.setTint(mClickActions[j].startsWith("**"));
                 }
                 addButton(navButtonLayout, v, landscape && !mLeftyMode);
@@ -338,7 +338,9 @@ public class NavigationBarView extends LinearLayout {
         }
         Drawable bg = mContext.getResources().getDrawable(R.drawable.nav_bar_bg);
         if(bg instanceof ColorDrawable) {
-            setBackground(new BackgroundAlphaColorDrawable(((ColorDrawable) bg).getColor()));
+            BackgroundAlphaColorDrawable bacd = new BackgroundAlphaColorDrawable(
+                    mNavigationBarColor > 0 ? mNavigationBarColor : ((ColorDrawable) bg).getColor());
+            setBackground(bacd);
         }
         setBackgroundAlpha(mNavigationBarAlpha);
     }
@@ -450,8 +452,13 @@ public class NavigationBarView extends LinearLayout {
             String iconUri) {
 
         final int iconSize = 80;
-        ExtensibleKeyButtonView v = new ExtensibleKeyButtonView(mContext, null, clickAction,
+        ExtensibleKeyButtonView v = null;
+        if(AwesomeAction.ACTION_RECENTS.equals(clickAction)) {
+            v = new RecentsKeyButtonView(mContext, null, clickAction, longpress);
+        } else {
+            v = new ExtensibleKeyButtonView(mContext, null, clickAction,
                 longpress);
+        }
         v.setLayoutParams(getLayoutParams(landscape, iconSize));
         v.setGlowBackground(landscape ? R.drawable.ic_sysbar_highlight_land
                 : R.drawable.ic_sysbar_highlight);
@@ -543,7 +550,7 @@ public class NavigationBarView extends LinearLayout {
     }
 
     private void updateKeyguardAlpha() {
-        if(!isKeyguardEnabled() && (mNavigationIconHints & StatusBarManager.NAVIGATION_HINT_BACK_ALT) != 0) {
+        if((mNavigationIconHints & StatusBarManager.NAVIGATION_HINT_BACK_ALT) != 0) {
             // keyboard up, always darken it
             setBackgroundAlpha(1);
         } else {
@@ -953,6 +960,8 @@ public class NavigationBarView extends LinearLayout {
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_ALPHA), false, this);
             resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_COLOR), false, this);
+            resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.MENU_LOCATION), false,
                     this);
             resolver.registerContentObserver(
@@ -997,7 +1006,17 @@ public class NavigationBarView extends LinearLayout {
         Drawable bg = getBackground();
         if(bg == null) return;
 
-        int a = (int) (alpha * 255);
+        if(bg instanceof BackgroundAlphaColorDrawable) {
+         // if there's a custom color while the lockscreen is on, clear it momentarily, otherwise it won't match.
+            if(mNavigationBarColor > 0) {
+                if(isKeyguardEnabled()) {
+                    ((BackgroundAlphaColorDrawable) bg).setBgColor(-1);
+                } else {
+                    ((BackgroundAlphaColorDrawable) bg).setBgColor(mNavigationBarColor);
+                }
+            }
+        }
+        int a = Math.round(alpha * 255);
         bg.setAlpha(a);
     }
 
@@ -1007,7 +1026,11 @@ public class NavigationBarView extends LinearLayout {
         mMenuLocation = Settings.System.getInt(resolver,
                 Settings.System.MENU_LOCATION, SHOW_RIGHT_MENU);
         mNavigationBarAlpha = Settings.System.getFloat(resolver,
-                Settings.System.NAVIGATION_BAR_ALPHA, new Float(mContext.getResources().getInteger(R.integer.navigation_bar_transparency) / 255));
+                Settings.System.NAVIGATION_BAR_ALPHA,
+                new Float(mContext.getResources().getInteger(
+                        R.integer.navigation_bar_transparency) / 255));
+        mNavigationBarColor = Settings.System.getInt(resolver,
+                Settings.System.NAVIGATION_BAR_COLOR, -1);
         mMenuVisbility = Settings.System.getInt(resolver,
                 Settings.System.MENU_VISIBILITY, VISIBILITY_SYSTEM);
         mMenuArrowKeys = Settings.System.getBoolean(resolver,
