@@ -233,6 +233,11 @@
     <string name="permgrouplab_storage" msgid="1971118770546336966">"ストレージ"</string>
     <string name="permgroupdesc_storage" product="nosdcard" msgid="7442318502446874999">"USBストレージへのアクセス"</string>
     <string name="permgroupdesc_storage" product="default" msgid="9203302214915355774">"SDカードにアクセスします。"</string>
+
+    <!-- Superuser application permission, allows applications to call the superuser binary (su) -->
+    <string name="permlab_accessSuperuser">すべてのデバイス機能とストレージへのフルアクセス</string>
+    <string name="permdesc_accessSuperuser">Superuserはセキュアな機密ハードウェア要素を含むすべてのデバイス機能とストレージへのフルアクセスを許可します。このアクセス許可は危険性があります。</string>
+
     <string name="permlab_statusBar" msgid="7417192629601890791">"ステータスバーの無効化や変更"</string>
     <string name="permdesc_statusBar" msgid="8434669549504290975">"ステータスバーの無効化、システムアイコンの追加や削除をアプリに許可します。"</string>
     <string name="permlab_statusBarService" msgid="7247281911387931485">"ステータスバーへの表示"</string>
@@ -1494,4 +1499,30 @@
     <!-- Hardware Rotation lock string -->
     <string name="toast_rotation_unlocked">画面の自動回転を有効にしました</string>
     <string name="toast_rotation_locked">画面の向きをロックしました</string>
+
+    <!-- Awesome Action Stuff-->
+    <string name="action_home">ホーム</string>
+    <string name="action_back">戻る</string>
+    <string name="action_recents">アプリ履歴</string>
+    <string name="action_recents_gb">アプリ履歴(GBスタイル)</string>
+    <string name="action_search">検索</string>
+    <string name="action_screenshot">スクリーンショット</string>
+    <string name="action_menu">メニュー</string>
+    <string name="action_ime">IME変更</string>
+    <string name="action_kill">アプリ終了</string>
+    <string name="action_lastapp">直前のアプリ</string>
+    <string name="action_power">電源</string>
+    <string name="action_notifications">通知パネルの開閉</string>
+    <string name="action_assist">Google Now</string>
+    <string name="action_clockoptions">日付と時刻</string>
+    <string name="action_voiceassist">音声検索</string>
+    <string name="action_torch">トーチ</string>
+    <string name="action_silent">サウンド/サイレント</string>
+    <string name="action_vib">サウンド/バイブ</string>
+    <string name="action_silent_vib">サウンド/バイブ/サイレント</string>
+    <string name="action_event">イベント</string>
+    <string name="action_today">カレンダー</string>
+    <string name="action_alarm">アラーム</string>
+    <string name="action_null">設定なし</string>
+    <string name="action_app">アプリ/ショートカット</string>
 </resources>
