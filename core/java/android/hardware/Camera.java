@@ -997,6 +997,12 @@ public class Camera {
     private native void enableFocusMoveCallback(int enable);
 
     /**
+     * Send a raw command to the camera driver
+     * @hide
+     */
+    public native void sendRawCommand(int arg1, int arg2, int arg3);
+
+    /**
      * Callback interface used to signal the moment of actual image capture.
      *
      * @see #takePicture(ShutterCallback, PictureCallback, PictureCallback, PictureCallback)
@@ -1487,6 +1493,7 @@ public class Camera {
      * @see #getParameters()
      */
     public void setParameters(Parameters params) {
+        Log.v(TAG, "setParameters:"+params.flatten());
         native_setParameters(params.flatten());
     }
 
@@ -2915,6 +2922,7 @@ public class Camera {
          * @see #getSceneMode()
          */
         public void setSceneMode(String value) {
+            if(getSupportedSceneModes() == null) return;
             set(KEY_SCENE_MODE, value);
         }
 
@@ -2952,6 +2960,7 @@ public class Camera {
          * @see #getFlashMode()
          */
         public void setFlashMode(String value) {
+            if(getSupportedFlashModes() == null) return;
             set(KEY_FLASH_MODE, value);
         }
 

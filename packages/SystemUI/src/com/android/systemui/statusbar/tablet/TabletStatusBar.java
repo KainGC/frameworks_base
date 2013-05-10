@@ -145,7 +145,6 @@ public class TabletStatusBar extends BaseStatusBar implements
     int mNumberOfButtons = 3;
     float mWidthLand = 0f;
     float mWidthPort = 0f;
-    boolean mLandscape = false;
     private int mMaxNotificationIcons = 5;
 
     TabletStatusBarView mStatusBarView;
@@ -233,7 +232,7 @@ public class TabletStatusBar extends BaseStatusBar implements
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                     | WindowManager.LayoutParams.FLAG_TOUCHABLE_WHEN_WAKING
                     | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
-                PixelFormat.OPAQUE);
+                PixelFormat.TRANSPARENT);
 
         // We explicitly leave FLAG_HARDWARE_ACCELERATED out of the flags.  The status bar occupies
         // very little screen real-estate and is updated fairly frequently.  By using CPU rendering
@@ -436,17 +435,12 @@ public class TabletStatusBar extends BaseStatusBar implements
                 // we're screwed here fellas
             }
         }
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mLandscape = true;
-        } else {
-            mLandscape = false;
-        }
-        UpdateWeights(mLandscape);
+        UpdateWeights(isLandscape());
         loadDimens();
         final int currentHeight = getStatusBarHeight();
         final int barHeight = (isLandscape() ? mUserBarHeightLand : mUserBarHeight);
         if (currentHeight != barHeight) {
-            onBarHeightChanged(isLandscape() ? mUserBarHeightLand : mUserBarHeight);
+            onBarHeightChanged(barHeight);
         }
         mNotificationPanelParams.height = getNotificationPanelHeight();
         mWindowManager.updateViewLayout(mNotificationPanel,
@@ -457,8 +451,9 @@ public class TabletStatusBar extends BaseStatusBar implements
     protected void loadDimens() {
         final Resources res = mContext.getResources();
 
-        mNaturalBarHeight = res.getDimensionPixelSize(
-                com.android.internal.R.dimen.navigation_bar_height);
+        mNaturalBarHeight = isLandscape() ?
+                res.getDimensionPixelSize(com.android.internal.R.dimen.navigation_bar_height_landscape) :
+                    res.getDimensionPixelSize(com.android.internal.R.dimen.navigation_bar_height);
 
         int newIconSize = res.getDimensionPixelSize(
             com.android.internal.R.dimen.system_bar_icon_size);
@@ -639,6 +634,10 @@ public class TabletStatusBar extends BaseStatusBar implements
         SettingsObserver settingsObserver = new SettingsObserver(new Handler());
         settingsObserver.observe();
         updateSettings();
+        mNavBarView.setTransparencyManager(mTransparencyManager);
+        mTransparencyManager.setStatusbar(mStatusBarView);
+        mTransparencyManager.setNavbar(mNavBarView);
+        mTransparencyManager.update();
         return sb;
     }
 
@@ -806,9 +805,10 @@ public class TabletStatusBar extends BaseStatusBar implements
     };
 
     public int getStatusBarHeight() {
-        return mStatusBarView != null ? mStatusBarView.getHeight()
-                : mContext.getResources().getDimensionPixelSize(
-                        com.android.internal.R.dimen.navigation_bar_height);
+        if (mStatusBarView == null) {
+            return (mNaturalBarHeight);
+        }
+        return mStatusBarView.getHeight();
     }
 
     protected int getStatusBarGravity() {
@@ -1067,6 +1067,7 @@ public class TabletStatusBar extends BaseStatusBar implements
                 mHandler.sendEmptyMessage(MSG_CLOSE_RECENTS_PANEL);
            }
         }
+        mTransparencyManager.update();
     }
 
     private void setNavigationVisibility(int visibility) {
@@ -1203,6 +1204,7 @@ public class TabletStatusBar extends BaseStatusBar implements
     }
 
     public void topAppWindowChanged(boolean showMenu) {
+        mTransparencyManager.update();
         if (DEBUG) {
             Slog.d(TAG, (showMenu?"showing":"hiding") + " the MENU button");
         }
@@ -1454,7 +1456,7 @@ public class TabletStatusBar extends BaseStatusBar implements
         loadNotificationPanel();
 
         final LinearLayout.LayoutParams params
-            = new LinearLayout.LayoutParams(mIconSize + 2*mIconHPadding, mNaturalBarHeight);
+            = new LinearLayout.LayoutParams(mIconSize + 2*mIconHPadding, getStatusBarHeight());
 
         // alternate behavior in DND mode
         if (mNotificationDNDMode) {
@@ -1706,14 +1708,12 @@ public class TabletStatusBar extends BaseStatusBar implements
         final int currentHeight = getStatusBarHeight();
         final int barHeight = (isLandscape() ? mUserBarHeightLand : mUserBarHeight);
         if (currentHeight != barHeight) {
-            onBarHeightChanged(isLandscape() ? mUserBarHeightLand : mUserBarHeight);
+            onBarHeightChanged(barHeight);
         }
         mCurrentUIMode = Settings.System.getInt(cr, Settings.System.CURRENT_UI_MODE, 0);
         mNumberOfButtons = Settings.System.getInt(cr, Settings.System.NAVIGATION_BAR_BUTTONS_QTY, 3);
         mWidthLand = Settings.System.getFloat(cr, Settings.System.NAVIGATION_BAR_WIDTH_LAND, 0f);
         mWidthPort = Settings.System.getFloat(cr, Settings.System.NAVIGATION_BAR_WIDTH_PORT, 0f);
-        mLandscape = (mContext.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
-
-        UpdateWeights(mLandscape);
+        UpdateWeights(isLandscape());
     }
 }
