@@ -37,7 +37,7 @@ public class FavoriteUserToggle extends BaseToggle {
     private SettingsObserver mObserver = null;
 
     @Override
-    protected void init(Context c, int style) {
+    public void init(Context c, int style) {
         super.init(c, style);
         reloadFavContactInfo();
         mObserver = new SettingsObserver(mHandler);
@@ -71,14 +71,13 @@ public class FavoriteUserToggle extends BaseToggle {
                 Settings.System.QUICK_TOGGLE_FAV_CONTACT);
 
         if (lookupKey != null && lookupKey.length() > 0) {
+            dismissKeyguard();
             collapseStatusBar();
             Uri lookupUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_LOOKUP_URI,
                     lookupKey);
             Uri res = ContactsContract.Contacts.lookupContact(mContext.getContentResolver(),
                     lookupUri);
-            Intent intent = ContactsContract.QuickContact.composeQuickContactsIntent(
-                    mContext, v, res,
-                    ContactsContract.QuickContact.MODE_LARGE, null);
+            Intent intent = new Intent(Intent.ACTION_VIEW, res);
             mContext.startActivityAsUser(intent, new UserHandle(UserHandle.USER_CURRENT));
         }
     }

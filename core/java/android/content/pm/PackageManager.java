@@ -858,6 +858,22 @@ public abstract class PackageManager {
 
     /**
      * Feature for {@link #getSystemAvailableFeatures} and
+     * {@link #hasSystemFeature}: The device is able to receive FM radio.
+     * @hide
+     */
+    @SdkConstant(SdkConstantType.FEATURE)
+    public static final String FEATURE_RADIO_FM_RECEIVER = "com.stericsson.hardware.fm.receiver";
+
+    /**
+     * Feature for {@link #getSystemAvailableFeatures} and
+     * {@link #hasSystemFeature}: The device is able to transmit FM radio.
+     * @hide
+     */
+    @SdkConstant(SdkConstantType.FEATURE)
+    public static final String FEATURE_RADIO_FM_TRANSMITTER = "com.stericsson.hardware.fm.transmitter";
+
+    /**
+     * Feature for {@link #getSystemAvailableFeatures} and
      * {@link #hasSystemFeature}: The device supports one or more methods of
      * reporting current location.
      */
@@ -2947,6 +2963,29 @@ public abstract class PackageManager {
      */
     public abstract void movePackage(
             String packageName, IPackageMoveObserver observer, int flags);
+
+    /**
+     * Returns the revoked permissions for given package.
+     * <p>
+     * NOTE: If the package has a shared uid then the revoked permissions for that
+     *       uid will be returned.
+     *
+     * @param packageName Name of the package which revoked permissions are needed
+     * @hide
+     */
+    public abstract String[] getRevokedPermissions(String packageName);
+
+    /**
+     * Sets the revoked permissions for given package.
+     * <p>
+     * NOTE: If the package has a shared uid then this method will revoke the
+     *       permissions for that shared uid.
+     *
+     * @param packageName Name of the package which revoked permissions are needed
+     * @param the revoked permissions.
+     * @hide
+     */
+    public abstract void setRevokedPermissions(String packageName, String[] perms);
 
     /**
      * Returns the device identity that verifiers can use to associate their scheme to a particular

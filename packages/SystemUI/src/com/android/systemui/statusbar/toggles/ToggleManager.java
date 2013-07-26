@@ -10,9 +10,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
+import android.location.LocationManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -25,6 +29,7 @@ import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
+import com.android.internal.telephony.PhoneConstants;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.QuickSettingsContainerView;
 import com.android.systemui.statusbar.phone.QuickSettingsTileView;
@@ -89,6 +94,11 @@ public class ToggleManager {
     public static final String QUIETHOURS_TOGGLE = "QUIETHOURS";
     public static final String SLEEP_TOGGLE = "SLEEP";
     public static final String STATUSBAR_TOGGLE = "STATUSBAR";
+    public static final String SCREENSHOT_TOGGLE = "SCREENSHOT";
+    public static final String REBOOT_TOGGLE = "REBOOT";
+    public static final String CUSTOM_TOGGLE = "CUSTOM";
+    public static final String STAYAWAKE_TOGGLE = "STAYAWAKE";
+    public static final String WIRELESS_ADB_TOGGLE = "WIRELESSADB";
 
     private int mStyle;
 
@@ -113,32 +123,51 @@ public class ToggleManager {
             toggleMap.put(BRIGHTNESS_TOGGLE, BrightnessToggle.class);
             toggleMap.put(SETTINGS_TOGGLE, SettingsToggle.class);
             toggleMap.put(WIFI_TOGGLE, WifiToggle.class);
-            toggleMap.put(SIGNAL_TOGGLE, SignalToggle.class);
+            if (deviceSupportsTelephony()) {
+                toggleMap.put(SIGNAL_TOGGLE, SignalToggle.class);
+                toggleMap.put(WIFI_TETHER_TOGGLE, WifiApToggle.class);
+            }
             toggleMap.put(ROTATE_TOGGLE, RotateToggle.class);
             toggleMap.put(CLOCK_TOGGLE, ClockToggle.class);
             toggleMap.put(GPS_TOGGLE, GpsToggle.class);
             toggleMap.put(IME_TOGGLE, ImeToggle.class);
             toggleMap.put(BATTERY_TOGGLE, BatteryToggle.class);
             toggleMap.put(AIRPLANE_TOGGLE, AirplaneModeToggle.class);
-            toggleMap.put(BLUETOOTH_TOGGLE, BluetoothToggle.class);
+            if (deviceSupportsBluetooth()) {
+                toggleMap.put(BLUETOOTH_TOGGLE, BluetoothToggle.class);
+            }
             toggleMap.put(SWAGGER_TOGGLE, SwaggerToggle.class);
-            toggleMap.put(VIBRATE_TOGGLE, VibrateToggle.class);
+            if (((Vibrator)mContext.getSystemService(Context.VIBRATOR_SERVICE)).hasVibrator()) {
+                toggleMap.put(VIBRATE_TOGGLE, VibrateToggle.class);
+                toggleMap.put(SOUND_STATE_TOGGLE, SoundStateToggle.class);
+            }
             toggleMap.put(SILENT_TOGGLE, SilentToggle.class);
             toggleMap.put(FCHARGE_TOGGLE, FastChargeToggle.class);
             toggleMap.put(SYNC_TOGGLE, SyncToggle.class);
-            toggleMap.put(NFC_TOGGLE, NfcToggle.class);
+            if (mContext.getSystemService(Context.NFC_SERVICE) != null) {
+                toggleMap.put(NFC_TOGGLE, NfcToggle.class);
+            }
             toggleMap.put(TORCH_TOGGLE, TorchToggle.class);
-            toggleMap.put(WIFI_TETHER_TOGGLE, WifiApToggle.class);
             toggleMap.put(USB_TETHER_TOGGLE, UsbTetherToggle.class);
-            toggleMap.put(TWOG_TOGGLE, TwoGToggle.class);
-            toggleMap.put(LTE_TOGGLE, LteToggle.class);
+            if (((TelephonyManager)mContext.getSystemService(Context.TELEPHONY_SERVICE))
+                    .getPhoneType() == PhoneConstants.PHONE_TYPE_GSM) {
+                toggleMap.put(TWOG_TOGGLE, TwoGToggle.class);
+            }
+            if (TelephonyManager.getLteOnCdmaModeStatic() == PhoneConstants.LTE_ON_CDMA_TRUE
+                    || TelephonyManager.getLteOnGsmModeStatic() != 0) {
+                toggleMap.put(LTE_TOGGLE, LteToggle.class);
+            }
             toggleMap.put(FAV_CONTACT_TOGGLE, FavoriteUserToggle.class);
-            toggleMap.put(SOUND_STATE_TOGGLE, SoundStateToggle.class);
             toggleMap.put(NAVBAR_HIDE_TOGGLE, NavbarHideToggle.class);
             toggleMap.put(QUICKRECORD_TOGGLE, QuickRecordToggle.class);
             toggleMap.put(QUIETHOURS_TOGGLE, QuietHoursToggle.class);
             toggleMap.put(SLEEP_TOGGLE, SleepToggle.class);
             toggleMap.put(STATUSBAR_TOGGLE, StatusbarToggle.class);
+            toggleMap.put(SCREENSHOT_TOGGLE, ScreenshotToggle.class);
+            toggleMap.put(REBOOT_TOGGLE, RebootToggle.class);
+            toggleMap.put(CUSTOM_TOGGLE, CustomToggle.class);
+            toggleMap.put(STAYAWAKE_TOGGLE, StayAwakeToggle.class);
+            toggleMap.put(WIRELESS_ADB_TOGGLE, WirelessAdbToggle.class);
             // toggleMap.put(BT_TETHER_TOGGLE, null);
         }
         return toggleMap;
@@ -157,6 +186,7 @@ public class ToggleManager {
             }
         };
         mContext.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_REQUEST_TOGGLES));
+
     }
 
     public void cleanup() {
@@ -224,8 +254,20 @@ public class ToggleManager {
                                 params);
             }
 
-            for (LinearLayout row : rows)
+            for (LinearLayout row : rows) {
+                if (row == rows.get(rows.size() - 1)) { // last row - need spacers
+                    if (row.getChildCount() < widgetsPerRow) {
+                        View spacer_front = new View(mContext);
+                        View spacer_end = new View(mContext);
+                        spacer_front.setBackgroundResource(R.drawable.qs_tile_background);
+                        spacer_end.setBackgroundResource(R.drawable.qs_tile_background);
+                        params.weight = 2f; // change weight so spacers grow
+                        row.addView(spacer_front,0, params);
+                        row.addView(spacer_end, params);
+                    }
+                }
                 mContainers[STYLE_TRADITIONAL].addView(row);
+            }
 
             mContainers[STYLE_TRADITIONAL].setVisibility(View.VISIBLE);
         }

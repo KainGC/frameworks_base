@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.graphics.PixelFormat;
 import android.os.Handler;
@@ -18,6 +19,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
@@ -37,6 +40,7 @@ public class WidgetView extends LinearLayout {
     int originalHeight = 0;
     TextView mWidgetLabel;
     ViewPager mWidgetPager;
+    View widgetView;
     WidgetPagerAdapter mAdapter;
     int widgetIds[];
     float mFirstMoveY;
@@ -44,6 +48,8 @@ public class WidgetView extends LinearLayout {
     long mDowntime;
     boolean mMoving = false;
     boolean showing = false;
+    boolean animating = false;
+    int mCurrUiInvertedMode;
 
     final static String TAG = "Widget";
 
@@ -52,11 +58,15 @@ public class WidgetView extends LinearLayout {
 
         mContext = context;
         mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+
+        mCurrUiInvertedMode = mContext.getResources().getConfiguration().uiInvertedMode;
+
         IntentFilter filter = new IntentFilter();
         filter.addAction(WidgetReceiver.ACTION_ALLOCATE_ID);
         filter.addAction(WidgetReceiver.ACTION_DEALLOCATE_ID);
         filter.addAction(WidgetReceiver.ACTION_TOGGLE_WIDGETS);
         filter.addAction(WidgetReceiver.ACTION_DELETE_WIDGETS);
+        filter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
         mContext.registerReceiver(new WidgetReceiver(), filter);
         mHandler = new Handler();
         SettingsObserver settingsObserver = new SettingsObserver(mHandler);
@@ -65,10 +75,10 @@ public class WidgetView extends LinearLayout {
 
     public void toggleWidgetView() {
         if (showing) {
-            if (mPopupView != null) {
-                mAdapter.onHide();
-                mWindowManager.removeView(mPopupView);
-                showing = false;
+            if (mPopupView != null && !animating) {
+                animating = true;
+                PlayOutAnim();
+                mHandler.postDelayed(removePopup, 490);
             }
         } else {
             WindowManager.LayoutParams params = new WindowManager.LayoutParams(
@@ -76,24 +86,54 @@ public class WidgetView extends LinearLayout {
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                            | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                            | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                        | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                     PixelFormat.TRANSLUCENT);
             params.gravity = Gravity.BOTTOM;
             params.setTitle("Widgets");
             if (mWindowManager != null && mAdapter !=null){
+                showing = true;
                 mWindowManager.addView(mPopupView, params);
                 mAdapter.onShow();
-                showing = true;
+                PlayInAnim();
             } else {
                 Log.e(TAG,"WTF - ToggleWidget when no pager or window manager exist?");
             }
         }
     }
 
+    private Runnable removePopup = new Runnable() {
+        public void run() {
+            mAdapter.onHide();
+            mWindowManager.removeView(mPopupView);
+            showing = false;
+            animating = false;
+        }
+    };
+
+    public Animation PlayInAnim() {
+        if (widgetView != null) {
+            Animation animation = AnimationUtils.loadAnimation(mContext, com.android.internal.R.anim.slide_in_up);
+            animation.setStartOffset(0);
+            widgetView.startAnimation(animation);
+            return animation;
+        }
+        return null;
+    }
+
+    public Animation PlayOutAnim() {
+        if (widgetView != null) {
+            Animation animation = AnimationUtils.loadAnimation(mContext, com.android.internal.R.anim.slide_out_down);
+            animation.setStartOffset(0);
+            widgetView.startAnimation(animation);
+            return animation;
+        }
+        return null;
+    }
+
     public void createWidgetView() {
         mPopupView = new FrameLayout(mContext);
-        View widgetView = View.inflate(mContext, R.layout.navigation_bar_expanded, null);
+        widgetView = View.inflate(mContext, R.layout.navigation_bar_expanded, null);
         mPopupView.addView(widgetView);
         mWidgetLabel = (TextView) mPopupView.findViewById(R.id.widgetlabel);
         mWidgetPager = (ViewPager) widgetView.findViewById(R.id.pager);
@@ -260,6 +300,14 @@ public class WidgetView extends LinearLayout {
                     mAdapter.mAppWidgetHost.deleteAppWidgetId(widgetIds[i]);
                 }
                 mAdapter.mAppWidgetHost.deleteHost();
+            } else if (Intent.ACTION_CONFIGURATION_CHANGED.equals(action)) {
+                // detect inverted ui mode change
+                int uiInvertedMode =
+                    mContext.getResources().getConfiguration().uiInvertedMode;
+                if (uiInvertedMode != mCurrUiInvertedMode) {
+                    mCurrUiInvertedMode = uiInvertedMode;
+                    createWidgetView();
+                }
             }
         }
     }

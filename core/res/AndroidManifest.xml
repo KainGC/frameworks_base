@@ -803,6 +803,22 @@
         android:label="@string/permlab_vibrate"
         android:description="@string/permdesc_vibrate" />
 
+    <!-- Allows access to the FM Radio receiver
+        @hide Pending API council approval -->
+    <permission android:name="com.stericsson.permission.FM_RADIO_RECEIVER"
+        android:permissionGroup="android.permission-group.HARDWARE_CONTROLS"
+        android:protectionLevel="normal"
+        android:label="@string/permlab_fm_radio_receiver"
+        android:description="@string/permdesc_fm_radio_receiver" />
+
+    <!-- Allows access to the FM Radio transmitter
+         @hide Pending API council approval -->
+    <permission android:name="com.stericsson.permission.FM_RADIO_TRANSMITTER"
+        android:permissionGroup="android.permission-group.HARDWARE_CONTROLS"
+        android:protectionLevel="dangerous"
+        android:label="@string/permlab_fm_radio_transmitter"
+        android:description="@string/permdesc_fm_radio_transmitter" />
+
     <!-- Allows access to the flashlight -->
     <permission android:name="android.permission.FLASHLIGHT"
         android:permissionGroup="android.permission-group.AFFECTS_BATTERY"
@@ -1926,6 +1942,14 @@
         android:description="@string/permdesc_broadcastPackageRemoved"
         android:protectionLevel="signature" />
 
+    <!-- Allows an application to intercept and rewrite outgoing SMS
+         @hide -->
+    <permission android:name="android.permission.INTERCEPT_SMS"
+        android:permissionGroup="android.permission-group.MESSAGES"
+        android:label="@string/permlab_interceptSmsSent"
+        android:description="@string/permdesc_interceptSmsSent"
+        android:protectionLevel="signature" />
+
     <!-- Allows an application to broadcast an SMS receipt notification -->
     <permission android:name="android.permission.BROADCAST_SMS"
         android:permissionGroup="android.permission-group.MESSAGES"
@@ -2100,6 +2124,13 @@
     <permission android:name="android.permission.COPY_PROTECTED_DATA"
         android:label="@string/permlab_copyProtectedData"
         android:description="@string/permlab_copyProtectedData"
+        android:protectionLevel="signature" />
+
+    <!-- Permission for reading writeing revoked permissions
+         @hide -->
+    <permission android:name="android.permission.REVOKE_PERMISSIONS"
+        android:label="@string/permlab_revokePermissions"
+        android:description="@string/permlab_revokePermissions"
         android:protectionLevel="signature" />
 
     <!-- Internal permission protecting access to the encryption methods
